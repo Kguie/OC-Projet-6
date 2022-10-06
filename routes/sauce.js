@@ -1,0 +1,28 @@
+/**
+ * Gestion des routes de sauce
+ **/
+
+const express = require("express");
+const sauceCtrl = require("../controllers/sauce");
+const auth = require("../middleware/auth");
+const multer = require("../middleware/multer-config");
+const router = express.Router();
+
+//Ajout d'une sauce
+router.post("/", auth, multer, sauceCtrl.addSauce);
+
+router.post("/:id/like", auth, sauceCtrl.likeSauce);
+
+//Modifier sauce
+router.put("/:id", auth, multer, sauceCtrl.modifySauce);
+
+//Supprime sauce
+router.delete("/:id", auth, sauceCtrl.deleteSauce);
+
+//Affiche toutes les sauces
+router.get("/:id", auth, sauceCtrl.getOneSauce);
+
+//Affiche la sauce dont on rentre l'id
+router.get("/", auth, sauceCtrl.getAllSauces);
+
+module.exports = router;

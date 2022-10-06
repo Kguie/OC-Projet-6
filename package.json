@@ -1,0 +1,35 @@
+{
+  "name": "bakend-piiquante",
+  "version": "1.0.0",
+  "description": "Backend du projet 6 Openclassrooms",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kguie/OC-Projet-6.git"
+  },
+  "author": "Kevin Guieba",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kguie/OC-Projet-6/issues"
+  },
+  "homepage": "https://github.com/Kguie/OC-Projet-6#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-session": "^2.0.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "express-rate-limit": "^6.6.0",
+    "helmet": "^6.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.6.4",
+    "mongoose-unique-validator": "^3.1.0",
+    "multer": "^1.4.5-lts.1",
+    "path": "^0.12.7",
+    "path-to-regexp": "^6.2.1",
+    "save": "^2.9.0"
+  }
+}

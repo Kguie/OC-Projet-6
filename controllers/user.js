@@ -27,7 +27,7 @@ exports.signup = (req, res, next) => {
 
 };
 
-/*Connection des utilisateurs */
+/*Connexion des utilisateurs */
 exports.login = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
     User.findOne({ email: req.body.email })

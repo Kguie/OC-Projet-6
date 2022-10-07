@@ -14,14 +14,19 @@ const MIME_TYPES = {
     "image/png": "png"
 };
 
+//Configuration du stockage
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, "images")
     },
     filename: (req, file, callback) => {
+        //Supprime les espaces et les cas d'extensions écrites à l'intérieur du nom
         const fileName = file.originalname.split(" ").join("_");
         const name = path.parse(fileName).name;
+
+        //Génération de l’extension
         const extension = MIME_TYPES[file.mimetype];
+
         callback(null, name + Date.now() + "." + extension);
     }
 });
@@ -39,7 +44,7 @@ const filter = (req, file, callback) => {
 //Upload de l'image avec contrôle de la taille du fichier
 let upload = multer({
     storage: storage,
-    //Limite de taille de la photo en bytes
+    //Limite de taille de la photo 2MB
     limits: { fileSize: 2000000 },
     fileFilter: filter
 });

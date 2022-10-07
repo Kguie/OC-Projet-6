@@ -5,6 +5,7 @@
 const Sauce = require("../models/sauce");
 const fs = require("fs");
 
+
 /*Ajoute une nouvelle sauce*/
 exports.addSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
@@ -25,21 +26,35 @@ exports.addSauce = (req, res, next) => {
         .catch(error => { res.status(400).json({ error }) })
 };
 
+
 /*Modifie une sauce*/
 exports.modifySauce = (req, res, next) => {
     const sauceObject = req.file ? {
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     } : { ...req.body };
+
+    //Sécurité pour être sur que l'utilisateur ne puisse créer un produit à son nom puis le modifier avec le userId d'un autre
     delete sauceObject._userId;
     Sauce.findById(req.params.id)
         .then((sauce) => {
             if (sauce.userId != req.auth.userId) {
                 res.status(403).json({ message: "Requête non autorisé" });
             } else {
-                Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-                    .then(() => res.status(200).json({ message: "Sauce modifiée!" }))
-                    .catch(error => res.status(401).json({ error }));
+                //Efface l'ancienne image du serveur si il y a  une nouvelle image dans la requête
+                if (!!req.file) {
+                    const filename = sauce.imageUrl.split("/images/")[1];
+                    fs.unlink(`images/${filename}`, () => {
+                        Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+                            .then(() => res.status(200).json({ message: "Sauce modifiée!" }))
+                            .catch(error => res.status(401).json({ error }));
+                    });
+                }
+                else {
+                    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+                        .then(() => res.status(200).json({ message: "Sauce modifiée!" }))
+                        .catch(error => res.status(401).json({ error }));
+                }
             }
         })
         .catch((error) => {
@@ -47,12 +62,13 @@ exports.modifySauce = (req, res, next) => {
         });
 };
 
+
 /*Noter une sauce*/
 exports.likeSauce = (req, res, next) => {
     //Récupération de la valeur de like
-
     const likeSauce = req.body.like;
     const validateUserId = req.auth.userId;
+
     Sauce.findById(req.params.id)
         .then((sauce) => {
             //Ajout d'une appréciation négative
@@ -97,6 +113,10 @@ exports.likeSauce = (req, res, next) => {
                         .then(() => res.status(200).json({ message: "Dislike retiré!" }))
                         .catch(error => res.status(401).json({ error }));
                 }
+                if (!sauce.usersLiked.includes(validateUserId) && !sauce.usersDisliked.includes(validateUserId)) {
+                    res.status(401).json({ message: "Vous n'avez pas encore laissé d'appréciation" });
+                }
+
             }
 
             //L'utilisateur choisit d'ajouter un like    
@@ -127,7 +147,7 @@ exports.likeSauce = (req, res, next) => {
 
 
 
-/*Supprime une sauce*/
+/*Supprimer une sauce*/
 exports.deleteSauce = (req, res, next) => {
     Sauce.findById(req.params.id)
         .then(sauce => {
@@ -135,7 +155,7 @@ exports.deleteSauce = (req, res, next) => {
                 res.status(403).json({ message: "Requête non autorisé" });
             } else {
                 const filename = sauce.imageUrl.split("/images/")[1];
-                //Délie la photo 
+                //Supprime la photo 
                 fs.unlink(`images/${filename}`, () => {
                     Sauce.deleteOne({ _id: req.params.id })
                         .then(() => { res.status(200).json({ message: "Sauce supprimé !" }) })
@@ -148,12 +168,14 @@ exports.deleteSauce = (req, res, next) => {
         });
 };
 
+
 /*Affiche une sauce selon son id*/
 exports.getOneSauce = (req, res, next) => {
     Sauce.findById(req.params.id)
         .then(sauce => res.status(200).json(sauce))
         .catch(error => res.status(404).json({ error }))
 };
+
 
 /*Affiche toutes les sauces*/
 exports.getAllSauces = (req, res, next) => {

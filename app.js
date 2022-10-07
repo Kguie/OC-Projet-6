@@ -1,5 +1,5 @@
 /**
- * Gestion de l'app avec la connection à MongoDB et insertion des dispositifs de sécurité
+ * Gestion de l'app avec la connexion à MongoDB et insertion des dispositifs de sécurité
  **/
 
 const mongoose = require("mongoose");
@@ -15,16 +15,13 @@ const app = express();
 //Utilisation des variables d'environnement
 dotenv.config();
 
-//Connection à la BDD
+//Connexion à la BDD
 mongoose.connect(process.env.DB_CONNECTION_STRING, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
     .then(() => console.log("Connexion à MongoDB réussie !"))
     .catch(() => console.log("Connexion à MongoDB échouée !"));
-
-
-app.use(express.json());
 
 //Ajout des CORS
 app.use((req, res, next) => {
@@ -39,9 +36,7 @@ app.use(helmet.xssFilter());
 //Protection contre le click jacking
 app.use(helmet.frameguard({ action: "deny" }));
 
-
-
-//Import des routes et gestion des images
+//Import des routes et gestion des images(fichier statique)
 app.use(bodyParser.json());
 app.use("/api/auth", userRoutes);
 app.use("/api/sauces", sauceRoutes);

@@ -11,6 +11,7 @@ const router = express.Router();
 //Ajout d'une sauce
 router.post("/", auth, multer, sauceCtrl.addSauce);
 
+//Ajoute ou enlève une appréciation
 router.post("/:id/like", auth, sauceCtrl.likeSauce);
 
 //Modifier sauce

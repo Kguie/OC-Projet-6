@@ -10,7 +10,7 @@ const loginLimiter = require("../middleware/limiter");
 //Enregistrement d'un nouvel utilisateur
 router.post("/signup", userCtrl.signup);
 
-//Connection de l'utilisateur
+//Connexion de l'utilisateur
 router.post("/login", loginLimiter, userCtrl.login);
 
 module.exports = router;

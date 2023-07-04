@@ -20,10 +20,10 @@ router.put("/:id", auth, multer, sauceCtrl.modifySauce);
 //Supprime sauce
 router.delete("/:id", auth, sauceCtrl.deleteSauce);
 
-//Affiche toutes les sauces
+//Affiche la sauce dont on rentre l'id
 router.get("/:id", auth, sauceCtrl.getOneSauce);
 
-//Affiche la sauce dont on rentre l'id
+//Affiche toutes les sauces
 router.get("/", auth, sauceCtrl.getAllSauces);
 
 module.exports = router;
